@@ -19,6 +19,7 @@ class ArenasController  extends AppController
     	$this->loadModel('Fighters');
 		$figterlist=$this->Fighters->find('all');
 		pr($figterlist->toArray());
+        pr($this->Fighters->getBestFighter());
     }
 
     public function login()
