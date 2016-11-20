@@ -59,6 +59,11 @@ class AppController extends Controller
         //         'action' => 'login'
         //     ]
         // ]);
+        // $this->Auth->config('authenticate', [
+        //           AuthComponent::ALL => ['userModel' => 'Players'],
+        //             'Basic',
+        //             'Form'
+        // ]);
     }
 
     /**

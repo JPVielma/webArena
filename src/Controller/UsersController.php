@@ -4,11 +4,11 @@ namespace App\Controller;
 use App\Controller\AppController;
 
 /**
- * Players Controller
+ * Users Controller
  *
- * @property \App\Model\Table\PlayersTable $Players
+ * @property \App\Model\Table\UsersTable $Users
  */
-class PlayersController extends AppController
+class UsersController extends AppController
 {
 
     /**
@@ -18,27 +18,27 @@ class PlayersController extends AppController
      */
     public function index()
     {
-        $players = $this->paginate($this->Players);
+        $users = $this->paginate($this->Users);
 
-        $this->set(compact('players'));
-        $this->set('_serialize', ['players']);
+        $this->set(compact('users'));
+        $this->set('_serialize', ['users']);
     }
 
     /**
      * View method
      *
-     * @param string|null $id Player id.
+     * @param string|null $id User id.
      * @return \Cake\Network\Response|null
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function view($id = null)
     {
-        $player = $this->Players->get($id, [
-            'contain' => ['Fighters']
+        $user = $this->Users->get($id, [
+            'contain' => []
         ]);
 
-        $this->set('player', $player);
-        $this->set('_serialize', ['player']);
+        $this->set('user', $user);
+        $this->set('_serialize', ['user']);
     }
 
     /**
@@ -48,69 +48,68 @@ class PlayersController extends AppController
      */
     public function add()
     {
-        $player = $this->Players->newEntity();
+        $user = $this->Users->newEntity();
         if ($this->request->is('post')) {
-            $player = $this->Players->patchEntity($player, $this->request->data);
-            if ($this->Players->save($player)) {
-                $this->Flash->success(__('The player has been saved.'));
+            $user = $this->Users->patchEntity($user, $this->request->data);
+            if ($this->Users->save($user)) {
+                $this->Flash->success(__('The user has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The player could not be saved. Please, try again.'));
+                $this->Flash->error(__('The user could not be saved. Please, try again.'));
             }
         }
-        $this->set(compact('player'));
-        $this->set('_serialize', ['player']);
+        $this->set(compact('user'));
+        $this->set('_serialize', ['user']);
     }
 
     /**
      * Edit method
      *
-     * @param string|null $id Player id.
+     * @param string|null $id User id.
      * @return \Cake\Network\Response|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
     public function edit($id = null)
     {
-        $player = $this->Players->get($id, [
+        $user = $this->Users->get($id, [
             'contain' => []
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $player = $this->Players->patchEntity($player, $this->request->data);
-            if ($this->Players->save($player)) {
-                $this->Flash->success(__('The player has been saved.'));
+            $user = $this->Users->patchEntity($user, $this->request->data);
+            if ($this->Users->save($user)) {
+                $this->Flash->success(__('The user has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The player could not be saved. Please, try again.'));
+                $this->Flash->error(__('The user could not be saved. Please, try again.'));
             }
         }
-        $this->set(compact('player'));
-        $this->set('_serialize', ['player']);
+        $this->set(compact('user'));
+        $this->set('_serialize', ['user']);
     }
 
     /**
      * Delete method
      *
-     * @param string|null $id Player id.
+     * @param string|null $id User id.
      * @return \Cake\Network\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $player = $this->Players->get($id);
-        if ($this->Players->delete($player)) {
-            $this->Flash->success(__('The player has been deleted.'));
+        $user = $this->Users->get($id);
+        if ($this->Users->delete($user)) {
+            $this->Flash->success(__('The user has been deleted.'));
         } else {
-            $this->Flash->error(__('The player could not be deleted. Please, try again.'));
+            $this->Flash->error(__('The user could not be deleted. Please, try again.'));
         }
 
         return $this->redirect(['action' => 'index']);
     }
 
-        //Login
-     public function login()
+         public function login()
     {
         if($this->request->is('post')){
             $user = $this->Auth->identify();
@@ -118,7 +117,7 @@ class PlayersController extends AppController
                 $this->Auth->setUser($user);
                 return $this->redirect(['controller' => 'fighters']);
             }
-             $this->Flash->error('Incorrect Login');
+            $this->Flash->error('Incorrect Login');
         }
     }
 }
