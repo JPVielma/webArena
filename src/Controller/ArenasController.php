@@ -10,6 +10,7 @@ use Facebook\GraphUser;
 use Facebook\FacebookSDKException;
 use Facebook\FacebookRequestException;
 use Facebook\FacebookAuthorizationException;
+use Cake\Routing\Router;
 
 /**
 * Personal Controller
@@ -113,7 +114,10 @@ class ArenasController  extends AppController
             // Now you can redirect to another page and use the access token from $_SESSION['facebook_access_token']
         } else {
             // replace your website URL same as added in the developers.facebook.com/apps e.g. if you used http instead of https and you used non-www version or www version of your website then you must add the same here
-            $loginUrl = $helper->getLoginUrl('http://localhost/webarena_group_si1_09_cg/arenas/index', $permissions);
+
+            $url= Router::url(['controller' => 'Arenas', 'action' => 'index'],true);
+pr($url);
+            $loginUrl = $helper->getLoginUrl($url, $permissions);
             echo '<a href="' . $loginUrl . '">Log in with Facebook!</a>';
         }
 
