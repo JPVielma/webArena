@@ -108,17 +108,4 @@ class PlayersController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
-
-        //Login
-     public function login()
-    {
-        if($this->request->is('post')){
-            $user = $this->Auth->identify();
-            if($user){
-                $this->Auth->setUser($user);
-                return $this->redirect(['controller' => 'fighters']);
-            }
-             $this->Flash->error('Incorrect Login');
-        }
-    }
 }

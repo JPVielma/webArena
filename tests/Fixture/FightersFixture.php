@@ -53,7 +53,7 @@ class FightersFixture extends TestFixture
         [
             'id' => 1,
             'name' => 'Lorem ipsum dolor sit amet',
-            'player_id' => '399e81ee-8d0a-4df0-a2f3-e8738585296f',
+            'player_id' => '7d6b2d90-6b2b-4478-a083-80c45117bc7e',
             'coordinate_x' => 1,
             'coordinate_y' => 1,
             'level' => 1,
@@ -62,7 +62,7 @@ class FightersFixture extends TestFixture
             'skill_strength' => 1,
             'skill_health' => 1,
             'current_health' => 1,
-            'next_action_time' => '2016-11-07 15:10:39',
+            'next_action_time' => '2016-12-02 14:48:25',
             'guild_id' => 1
         ],
     ];

@@ -17,7 +17,10 @@ class PlayersControllerTest extends IntegrationTestCase
      */
     public $fixtures = [
         'app.players',
-        'app.fighters'
+        'app.fighters',
+        'app.guilds',
+        'app.messages',
+        'app.tools'
     ];
 
     /**

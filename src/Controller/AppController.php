@@ -16,6 +16,7 @@ namespace App\Controller;
 
 use Cake\Controller\Controller;
 use Cake\Event\Event;
+use Cake\Controller\Component\AuthComponent;
 
 /**
  * Application Controller
@@ -43,27 +44,26 @@ class AppController extends Controller
 
         $this->loadComponent('RequestHandler');
         $this->loadComponent('Flash');
-        // $this->loadComponent('Auth', [
-        //     'authenticate'=> [
-        //         'Basic' => ['userModel' => 'Players'],
-        //         'Form'=> [
-        //                 'userModel'=>'Players',
-        //                 'fields'=> [
-        //                     'username'=> 'email',
-        //                     'password'=> 'password'               
-        //                 ]
-        //         ]
-        //     ],
-        //     'loginAction'=>[
-        //         'controller'=>'Players',
-        //         'action' => 'login'
-        //     ]
-        // ]);
-        // $this->Auth->config('authenticate', [
-        //           AuthComponent::ALL => ['userModel' => 'Players'],
-        //             'Basic',
-        //             'Form'
-        // ]);
+        $this->loadComponent('Auth', [
+            'authenticate'=> [
+                'Form'=> [
+                        'fields'=> [
+                            'username'=> 'email',
+                            'password'=> 'password'               
+                        ],
+                        'userModel'=>'Players'
+                ]
+            ],
+            'loginAction'=>[
+                'controller'=>'Arenas',
+                'action' => 'login'
+            ],
+            'logoutRedirect' => array(
+                'controller' => 'Arenas',
+                'action' => 'login',
+                'home'
+            ),
+        ]);
     }
 
     /**
@@ -80,4 +80,14 @@ class AppController extends Controller
             $this->set('_serialize', true);
         }
     }
+
+    // public function beforeFilter(Event $event)
+    // {
+    // parent::beforeFilter($event);
+    // $this->Auth->config('authenticate', [
+    //     'Basic' => ['userModel' => 'Players'],
+    //     'Form' => ['userModel' => 'Players']
+    // ]);
+    // $this->Auth->allow(array('controller' => 'Arenas', 'action' => 'index'));
+    // }
 }
