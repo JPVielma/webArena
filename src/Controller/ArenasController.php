@@ -4,6 +4,9 @@ use App\Controller\AppController;
 use Facebook; 
 use Cake\Routing\Router;
 use Cake\Mailer\Email;
+use Cake\Event\Event;
+use Cake\Event\EventManager;
+
 
 define("EMPTY", 0);
 define("FIGHTER", 1);
@@ -22,30 +25,7 @@ class ArenasController  extends AppController
 {   
     public function index()
     {
-        if($this->request->session()->read('valid')!=true){
-           
-        }
 
-//         $fb = new Facebook\Facebook([
-//           'app_id' => '390888334577306',
-//           'app_secret' => 'c720dcf8f82343e3ee705b7b8fff3e34',
-//           'default_graph_version' => 'v2.4',
-//       ]);
-
-// try {
-//   // Returns a `Facebook\FacebookResponse` object
-//   $response = $fb->get('/me?fields=id,name', '{access-token}');
-// } catch(Facebook\Exceptions\FacebookResponseException $e) {
-//   echo 'Graph returned an error: ' . $e->getMessage();
-//   exit;
-// } catch(Facebook\Exceptions\FacebookSDKException $e) {
-//   echo 'Facebook SDK returned an error: ' . $e->getMessage();
-//   exit;
-// }
-
-// $user = $response->getGraphUser();
-
-// echo 'Name: ' . $user['name'];
     }
 
     public function recoverPassword(){
@@ -99,12 +79,8 @@ class ArenasController  extends AppController
 
     public function diary()
     {
-        if($this->request->session()->read('valid')!=true){
-            $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
-        }
-         $this->loadModel('Events');
+        $this->loadModel('Events');
         $events = $this->paginate($this->Events);
-
         $this->set(compact('events'));
         $this->set('_serialize', ['events']);
     }
@@ -112,10 +88,11 @@ class ArenasController  extends AppController
    public function fighter()
    {
         //$this->Session->delete('objects');
+        //Getting the Id of the connected fighter
         $playerId = $this->Session->read('Connected');
-
+        //getting fighters created by the user
         $this->set('characters',$this->Fighter->find('list', array('conditions' => array('player_id' => $playerId))));
-
+        //if the form has beeen sent
         if ($this->request->is('post'))
         {
             if(!empty($this->data['Register']))
@@ -127,7 +104,6 @@ class ArenasController  extends AppController
                 $x = $this->Fighter->field('coordinate_x');
                 $y = $this->Fighter->field('coordinate_y');
                 $fighter = $this->Fighter->field('name');
-                $this->Event->save(array('name' => 'Entrée de '.$fighter, 'date' =>  date("Y-m-d H:i:s"), 'coordinate_x' => $x, 'coordinate_y' => $y));
             }
         }
     }
@@ -136,6 +112,7 @@ class ArenasController  extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $fighter = $this->Fighters->get($id);
+        $this->addEvent(date("Y-m-d H:i:s"), $fighter->name.' has dieded ', $fighter->coordinate_x,$fighter->coordinate_y);
         if ($this->Fighters->delete($fighter)) {
             $this->Flash->success(__('The fighter has been eliminated.'));
         } else {
@@ -152,10 +129,12 @@ public function attack($id1, $id2)
         $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
     }
     $this->loadModel('Fighters');
+    $this->loadModel('Events');
     $fighter1 = $this->Fighters->get($id1);
     $fighter2 = $this->Fighters->get($id2);
     if ((10 + $fighter2->level - $fighter1->level) > rand(0, 20)){
-            $this->Flash->success($id1 ."hits ". $id2 . " successfully !");
+            $this->Flash->success($fighter1->name ." hits ". $fighter2->name . " successfully !");
+            $this->addEvent(date("Y-m-d H:i:s"), $fighter1->name.' attacked successfully '.$fighter2->name, $fighter1->coordinate_x,$fighter1->coordinate_y);
             $fighter1->xp++;
             // Every 4 xp, lvl up
             if ($fighter1->xp % 4 == 0) {
@@ -170,8 +149,8 @@ public function attack($id1, $id2)
                 $this->Fighters->save($fighter1);
             }
     }
-    else $this->Flash->error($id1 ."hits ". $id2 . " and misses !");
-
+    else $this->Flash->error($fighter1->name ." hits ". $fighter2->name . " and misses !");
+    $this->addEvent(date("Y-m-d H:i:s"), $fighter1->name.' missed '.$fighter2->name, $fighter1->coordinate_x,$fighter1->coordinate_y);
     $this->redirect(array('controller' => 'Arenas', 'action' => 'sight'));
 }
 
@@ -250,18 +229,22 @@ public function attack($id1, $id2)
             case UP:
                  $y=$fighter->coordinate_y;
                  $fighter->coordinate_y=$y+1;
+                 $this->addEvent(date("Y-m-d H:i:s"), $fighter->name.' moved North ', $fighter->coordinate_x,$fighter->coordinate_y);
                 break;
             case DOWN:
                 $y=$fighter->coordinate_y;
                 $fighter->coordinate_y=$y-1;
+                $this->addEvent(date("Y-m-d H:i:s"), $fighter->name.' moved South ', $fighter->coordinate_x,$fighter->coordinate_y);
                 break;
             case LEFT:
                 $x=$fighter->coordinate_x;
                 $fighter->coordinate_x=$x-1;
+                $this->addEvent(date("Y-m-d H:i:s"), $fighter->name.' moved East ', $fighter->coordinate_x,$fighter->coordinate_y);
                 break;
             case RIGHT:
                 $x=$fighter->coordinate_x;
                 $fighter->coordinate_x=$x+1;
+                $this->addEvent(date("Y-m-d H:i:s"), $fighter->name.' moved West ', $fighter->coordinate_x,$fighter->coordinate_y);
                 break;
         }
         $this->Fighters->save($fighter);
@@ -369,6 +352,7 @@ public function logout() {
 
     }
 
+
     public function fblogin(){
         $name='Logged in with Facebook';
             $session = $this->request->session();
@@ -392,26 +376,14 @@ public function logout() {
             $this->redirect(array('controller' => 'Arenas', 'action' => 'index'));
     }
 
-    public function addEvent()
-    {
-        if($this->request->session()->read('valid')!=true){
-            $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
+        public function addEvent($time, $action, $pos_x, $pos_y)
+        {
+            $Event = \Cake\ORM\TableRegistry::get('Events');
+            $newEvent = $Event->newEntity();
+            $newEvent->date = $time;
+            $newEvent->name = $action;
+            $newEvent->coordinate_x = $pos_x;
+            $newEvent->coordinate_y = $pos_y;
+            $Event->save($newEvent);
         }
-
-        $event = $this->Events->newEntity();
-        if ($this->request->is('post')) {
-            $event = $this->Events->patchEntity($event, $this->request->data);
-            if ($this->Events->save($event)) {
-                $this->Flash->success(__('The event has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('The event could not be saved. Please, try again.'));
-            }
-        }
-        $this->set(compact('event'));
-        $this->set('_serialize', ['event']);
-    }
-
-
 }
