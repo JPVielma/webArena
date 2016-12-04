@@ -63,7 +63,17 @@ $cakeDescription = 'Web Arena';
     <div class="container clearfix">
         <?= $this->fetch('content') ?>
     </div>
-    <footer>
+
+    <footer class="top-bar expanded" data-topbar role="navigation">
+    <div class="container clearfix">
+    <h3>Project webArena-SII1-9-CG</h3>
+    <ul class="title-area large-3 medium-4 columns">
+        <li>Alexandre DEBRIE</li> 
+        <li>Juan Pablo VIELMA</li>
+        <li>Joseph CHACHOUA</li>
+        <li>Leonard Lys</li>
+    </ul>
+    </div>
     </footer>
 </body>
 </html>
