@@ -92,7 +92,7 @@ class ArenasController  extends AppController
         }
     }
 
-    public function deleteFighter($id = null)
+    public function deleteFighter($id)
     {
         $this->request->allowMethod(['post', 'delete']);
         $fighter = $this->Fighters->get($id);
@@ -115,9 +115,13 @@ public function attack($id1, $id2)
             $this->Flash->success($id1 ."hits ". $id2 . " successfully !");
             $fighter1->xp++;
             $fighter2->current_health-=$fighter1->skill_strength;
-            if ($fighter2->current_health==0) $this->deleteFighter($fighter2);
-            $this->Fighters->save($fighter1);
             $this->Fighters->save($fighter2);
+            $this->Fighters->save($fighter1);
+            if ($fighter2->current_health==0) {
+                $this->deleteFighter($fighter2->id);
+                $fighter1->xp += $fighter2->level;
+                $this->Fighters->save($fighter1);
+            }
     }
     else $this->Flash->error($id1 ."hits ". $id2 . " and misses !");
 
