@@ -11,11 +11,11 @@
 <h1>Combat Arena</h1>
 <?php
 echo "<table>";
-for ($i=0; $i<10; $i++){
+for ($i=0; $i<BORDERY; $i++){
     echo "<tr>";
-    for ($j=0; $j<15; $j++){
+    for ($j=0; $j<BORDERX; $j++){
         echo "<td>";
-        if ($matrix[$i][$j]==1 && $surroundings[$i][$j]==1)echo "F";
+        if ($matrix[$i][$j]==FIGHTER && $surroundings[$i][$j]==1)echo "F";
         if ($matrix[$i][$j]==0 && $surroundings[$i][$j]==0) echo ".";
         if ($matrix[$i][$j]==2 && $surroundings[$i][$j]==1) echo "</br>".$this->Form->postLink(
                 'Attack!',

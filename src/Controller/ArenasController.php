@@ -8,6 +8,10 @@ define("EMPTY", 0);
 define("FIGHTER", 1);
 define ("ATTACK", 2);
 
+define ("BORDERX", 15);
+define ("BORDERY", 10);
+
+
 define ("LEFT", 10);
 define ("UP", 11);
 define ("DOWN", 12);
@@ -17,7 +21,26 @@ class ArenasController  extends AppController
 {   
     public function index()
     {
+        $fb = new Facebook\Facebook([
+          'app_id' => '390888334577306',
+          'app_secret' => 'c720dcf8f82343e3ee705b7b8fff3e34',
+          'default_graph_version' => 'v2.4',
+      ]);
 
+try {
+  // Returns a `Facebook\FacebookResponse` object
+  $response = $fb->get('/me?fields=id,name', '{access-token}');
+} catch(Facebook\Exceptions\FacebookResponseException $e) {
+  echo 'Graph returned an error: ' . $e->getMessage();
+  exit;
+} catch(Facebook\Exceptions\FacebookSDKException $e) {
+  echo 'Facebook SDK returned an error: ' . $e->getMessage();
+  exit;
+}
+
+$user = $response->getGraphUser();
+
+echo 'Name: ' . $user['name'];
     }
 
     public function recoverPassword(){
@@ -115,12 +138,12 @@ public function attack($id1, $id2)
 }
 
  public function sight()
-    {
+{
         if(isset($_SESSION['valid'])){
             $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
         }
-        for ($i=0; $i<10; $i++){
-            for ($j=0; $j<15; $j++){
+        for ($i=0; $i<=BORDERY; $i++){
+            for ($j=0; $j<BORDERX; $j++){
                 $matrix[$i][$j]=0;
                 $surroundings[$i][$j]=0;
             }
@@ -132,16 +155,19 @@ public function attack($id1, $id2)
             $matrix[$row->coordinate_y][$row->coordinate_x]=FIGHTER;
             $players[$row->coordinate_y.$row->coordinate_x]=$row;
             if ($row->id==1) $fighter=$row;
+        }
+
        $x_fighter=$fighter->coordinate_x;
        $y_fighter=$fighter->coordinate_y;
+
         if($matrix[$y_fighter+1][$x_fighter]==FIGHTER)$matrix[$y_fighter+1][$x_fighter]=ATTACK;
-        else $matrix[$y_fighter+1][$x_fighter]=UP;
+        else if($y_fighter+1<BORDERY)$matrix[$y_fighter+1][$x_fighter]=UP;
         if($matrix[$y_fighter][$x_fighter+1]==FIGHTER)$matrix[$y_fighter][$x_fighter+1]=ATTACK;
-        else $matrix[$y_fighter][$x_fighter+1]=RIGHT;
+        else if($x_fighter+1<BORDERX) $matrix[$y_fighter][$x_fighter+1]=RIGHT;
         if($matrix[$y_fighter-1][$x_fighter]==FIGHTER)$matrix[$y_fighter-1][$x_fighter]=ATTACK;
-        else $matrix[$y_fighter-1][$x_fighter]=DOWN;
+        else if($y_fighter-1>=0) $matrix[$y_fighter-1][$x_fighter]=DOWN;
         if($matrix[$y_fighter][$x_fighter-1]==FIGHTER)$matrix[$y_fighter][$x_fighter-1]=ATTACK;
-        else $matrix[$y_fighter][$x_fighter-1]=LEFT;
+        else if (($x_fighter-1)>0)$matrix[$y_fighter][$x_fighter-1]=LEFT;
 
         $sight=($fighter->skill_sight)+1;
         $count=0;
@@ -153,13 +179,21 @@ public function attack($id1, $id2)
                 $surroundings[$y_fighter-$i][$x_fighter-$j]=1;
             }
         }
-         
+
         $this->set("surroundings", $surroundings); 
         $this->set("players", $players);
         $this->set("matrix", $matrix);
         $this->set("fighters", $fighters);
         $this->set("fighter", $fighter);
-    }
+
+        $this->set("FIGHTER", FIGHTER); 
+        $this->set("UP", UP); 
+        $this->set("DOWN", DOWN); 
+        $this->set("LEFT", LEFT); 
+        $this->set("RIGHT", RIGHT); 
+        $this->set("BORDERY", BORDERY); 
+        $this->set("BORDERX", BORDERX); 
+
 }
 
     public function move($idFighter, $direction){
