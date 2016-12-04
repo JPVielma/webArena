@@ -25,7 +25,9 @@ class ArenasController  extends AppController
 {   
     public function index()
     {
-
+        if($this->request->session()->read('valid')!=true){
+            // $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
+        }
     }
 
     public function recoverPassword(){
@@ -67,7 +69,9 @@ class ArenasController  extends AppController
             $player = $this->Players->patchEntity($player, $this->request->data);
             if ($this->Players->save($player)) {
                 $this->Flash->success(__('The player has been saved.'));
-
+                $this->request->session()->write('valid', true);
+                $this->request->session()->write('username', $player->email);
+                $this->request->session()->write('id', $player->id);
                 return $this->redirect(['action' => 'index']);
             } else {
                 $this->Flash->error(__('The player could not be saved. Please, try again.'));
@@ -79,6 +83,9 @@ class ArenasController  extends AppController
 
     public function diary()
     {
+        if($this->request->session()->read('valid')!=true){
+            $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
+        }
         $this->loadModel('Events');
         $events = $this->paginate($this->Events);
         $this->set(compact('events'));
@@ -211,6 +218,7 @@ public function attack($id1, $id2)
         $this->set("UP", UP); 
         $this->set("DOWN", DOWN); 
         $this->set("LEFT", LEFT); 
+        $this->set("ATTACK", ATTACK); 
         $this->set("RIGHT", RIGHT); 
         $this->set("BORDERY", BORDERY); 
         $this->set("BORDERX", BORDERX); 
@@ -350,6 +358,8 @@ public function logout() {
             }
         }
 
+        $passwordRecovery=Router::url(['controller' => 'Arenas', 'action' => 'recoverPassword'],true);
+        $this->set('passwordRecovery', $passwordRecovery);
     }
 
 
@@ -378,6 +388,9 @@ public function logout() {
 
         public function addEvent($time, $action, $pos_x, $pos_y)
         {
+            if($this->request->session()->read('valid')!=true){
+                $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
+            }
             $Event = \Cake\ORM\TableRegistry::get('Events');
             $newEvent = $Event->newEntity();
             $newEvent->date = $time;

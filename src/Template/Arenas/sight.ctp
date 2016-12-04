@@ -17,7 +17,7 @@ for ($i=0; $i<BORDERY; $i++){
         echo "<td>";
         if ($matrix[$i][$j]==FIGHTER && $surroundings[$i][$j]==1)echo "F";
         if ($matrix[$i][$j]==0 && $surroundings[$i][$j]==0) echo ".";
-        if ($matrix[$i][$j]==2 && $surroundings[$i][$j]==1) echo "</br>".$this->Form->postLink(
+        if ($matrix[$i][$j]==ATTACK && $surroundings[$i][$j]==1) echo "</br>".$this->Form->postLink(
                 'Attack!',
                 array('controller' => 'Arenas',
                     'action' => 'attack', $fighter['id'], $players[$i.$j]['id']));

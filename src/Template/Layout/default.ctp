@@ -45,7 +45,7 @@ $cakeDescription = 'Web Arena';
             <?php
             // session_start();
             if(isset($_SESSION['valid'])){
-                echo "<li>".$_SESSION['username']."</li>";
+                echo "<li>".$this->Html->link(__($_SESSION['username']), ['controller' => 'Arenas', 'action' => 'index'])."</li>";
                 echo "<li>". $this->Html->link(__('Logout'), ['controller' => 'Arenas', 'action' => 'logout'])."</li>";
             }
             else{

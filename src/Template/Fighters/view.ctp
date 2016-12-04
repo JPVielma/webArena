@@ -15,14 +15,6 @@
             <td><?= h($fighter->name) ?></td>
         </tr>
         <tr>
-            <th scope="row"><?= __('Player') ?></th>
-            <td><?= $fighter->has('player') ? $this->Html->link($fighter->player->id, ['controller' => 'Players', 'action' => 'view', $fighter->player->id]) : '' ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Guild') ?></th>
-            <td><?= $fighter->has('guild') ? $this->Html->link($fighter->guild->name, ['controller' => 'Guilds', 'action' => 'view', $fighter->guild->id]) : '' ?></td>
-        </tr>
-        <tr>
             <th scope="row"><?= __('Id') ?></th>
             <td><?= $this->Number->format($fighter->id) ?></td>
         </tr>
@@ -63,66 +55,4 @@
             <td><?= h($fighter->next_action_time) ?></td>
         </tr>
     </table>
-    <div class="related">
-        <h4><?= __('Related Messages') ?></h4>
-        <?php if (!empty($fighter->messages)): ?>
-        <table cellpadding="0" cellspacing="0">
-            <tr>
-                <th scope="col"><?= __('Id') ?></th>
-                <th scope="col"><?= __('Date') ?></th>
-                <th scope="col"><?= __('Title') ?></th>
-                <th scope="col"><?= __('Message') ?></th>
-                <th scope="col"><?= __('Fighter Id From') ?></th>
-                <th scope="col"><?= __('Fighter Id') ?></th>
-                <th scope="col" class="actions"><?= __('Actions') ?></th>
-            </tr>
-            <?php foreach ($fighter->messages as $messages): ?>
-            <tr>
-                <td><?= h($messages->id) ?></td>
-                <td><?= h($messages->date) ?></td>
-                <td><?= h($messages->title) ?></td>
-                <td><?= h($messages->message) ?></td>
-                <td><?= h($messages->fighter_id_from) ?></td>
-                <td><?= h($messages->fighter_id) ?></td>
-                <td class="actions">
-                    <?= $this->Html->link(__('View'), ['controller' => 'Messages', 'action' => 'view', $messages->id]) ?>
-                    <?= $this->Html->link(__('Edit'), ['controller' => 'Messages', 'action' => 'edit', $messages->id]) ?>
-                    <?= $this->Form->postLink(__('Delete'), ['controller' => 'Messages', 'action' => 'delete', $messages->id], ['confirm' => __('Are you sure you want to delete # {0}?', $messages->id)]) ?>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </table>
-        <?php endif; ?>
-    </div>
-    <div class="related">
-        <h4><?= __('Related Tools') ?></h4>
-        <?php if (!empty($fighter->tools)): ?>
-        <table cellpadding="0" cellspacing="0">
-            <tr>
-                <th scope="col"><?= __('Id') ?></th>
-                <th scope="col"><?= __('Type') ?></th>
-                <th scope="col"><?= __('Bonus') ?></th>
-                <th scope="col"><?= __('Coordinate X') ?></th>
-                <th scope="col"><?= __('Coordinate Y') ?></th>
-                <th scope="col"><?= __('Fighter Id') ?></th>
-                <th scope="col" class="actions"><?= __('Actions') ?></th>
-            </tr>
-            <?php foreach ($fighter->tools as $tools): ?>
-            <tr>
-                <td><?= h($tools->id) ?></td>
-                <td><?= h($tools->type) ?></td>
-                <td><?= h($tools->bonus) ?></td>
-                <td><?= h($tools->coordinate_x) ?></td>
-                <td><?= h($tools->coordinate_y) ?></td>
-                <td><?= h($tools->fighter_id) ?></td>
-                <td class="actions">
-                    <?= $this->Html->link(__('View'), ['controller' => 'Tools', 'action' => 'view', $tools->id]) ?>
-                    <?= $this->Html->link(__('Edit'), ['controller' => 'Tools', 'action' => 'edit', $tools->id]) ?>
-                    <?= $this->Form->postLink(__('Delete'), ['controller' => 'Tools', 'action' => 'delete', $tools->id], ['confirm' => __('Are you sure you want to delete # {0}?', $tools->id)]) ?>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </table>
-        <?php endif; ?>
-    </div>
 </div>
