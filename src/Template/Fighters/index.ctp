@@ -22,7 +22,6 @@
                 <th scope="col"><?= $this->Paginator->sort('skill_strength') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('skill_health') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('current_health') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('guild_id') ?></th>
                 <th scope="col" class="actions"><?= __('Actions') ?></th>
             </tr>
         </thead>
@@ -41,7 +40,6 @@
                 <td><?= $this->Number->format($fighter->skill_strength) ?></td>
                 <td><?= $this->Number->format($fighter->skill_health) ?></td>
                 <td><?= $this->Number->format($fighter->current_health) ?></td>
-                <td><?= $fighter->has('guild') ? $this->Html->link($fighter->guild->name, ['controller' => 'Guilds', 'action' => 'view', $fighter->guild->id]) : '' ?></td>
                 <td class="actions">
                     <?= $this->Html->link(__('View'), ['action' => 'view', $fighter->id]) ?>
                     <?= $this->Html->link(__('Edit'), ['action' => 'edit', $fighter->id]) ?>

@@ -70,7 +70,7 @@ class FightersController extends AppController
             $this->request->data['Fighters']['coordinate_y'] = rand(0,10);
             $this->request->data['Fighters']['level'] = 1; 
             $this->request->data['Fighters']['xp'] = 0;
-            $this->request->data['Fighters']['skill_sight'] = 1;
+            $this->request->data['Fighters']['skill_sight'] = 0;
             $this->request->data['Fighters']['skill_strength'] = 1;
             $this->request->data['Fighters']['skill_health'] = 3;
             $this->request->data['Fighters']['current_health'] = 3;

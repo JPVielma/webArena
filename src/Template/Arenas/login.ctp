@@ -9,8 +9,7 @@
        <?= $this->Form->end(); ?>
 
 		    <a href="<?php echo $loginUrl;?>">Log in with Facebook!</a>
+        <br>
+        <a href="<?php echo $passwordRecovery;?>">Recover Password</a>
    </div>
-
-   
-
 </div>
