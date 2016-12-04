@@ -21,22 +21,22 @@ for ($i=0; $i<BORDERY; $i++){
                 'Attack!',
                 array('controller' => 'Arenas',
                     'action' => 'attack', $fighter['id'], $players[$i.$j]['id']));
-        if ($matrix[$i][$j]==10 && $surroundings[$i][$j]==1) echo "</br>".$this->Form->postLink(
+        if ($matrix[$i][$j]==UP && $surroundings[$i][$j]==1) echo "</br>".$this->Form->postLink(
                 'X',
                 array('controller' => 'Arenas',
-                    'action' => 'move', $fighter['id'], 10));
-        if ($matrix[$i][$j]==11 && $surroundings[$i][$j]==1) echo "</br>".$this->Form->postLink(
+                    'action' => 'move', $fighter['id'], UP));
+        if ($matrix[$i][$j]==DOWN && $surroundings[$i][$j]==1) echo "</br>".$this->Form->postLink(
                 'X',
                 array('controller' => 'Arenas',
-                    'action' => 'move', $fighter['id'], 11));
-        if ($matrix[$i][$j]==12 && $surroundings[$i][$j]==1) echo "</br>".$this->Form->postLink(
+                    'action' => 'move', $fighter['id'], DOWN));
+        if ($matrix[$i][$j]==LEFT && $surroundings[$i][$j]==1) echo "</br>".$this->Form->postLink(
                 'X',
                 array('controller' => 'Arenas',
-                    'action' => 'move', $fighter['id'], 12));
-        if ($matrix[$i][$j]==13 && $surroundings[$i][$j]==1) echo "</br>".$this->Form->postLink(
+                    'action' => 'move', $fighter['id'], LEFT));
+        if ($matrix[$i][$j]==RIGHT && $surroundings[$i][$j]==1) echo "</br>".$this->Form->postLink(
                 'X',
                 array('controller' => 'Arenas',
-                    'action' => 'move', $fighter['id'], 13));
+                    'action' => 'move', $fighter['id'], RIGHT));
         echo "</td>" ;
     }
     echo "</tr>";
