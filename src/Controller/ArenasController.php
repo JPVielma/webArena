@@ -3,6 +3,8 @@ namespace App\Controller;
 use App\Controller\AppController;
 use Facebook; 
 use Cake\Routing\Router;
+use Cake\Event\Event;
+use Cake\Event\EventManager;
 
 define("EMPTY", 0);
 define("FIGHTER", 1);
@@ -73,9 +75,8 @@ echo 'Name: ' . $user['name'];
 
     public function diary()
     {
-         $this->loadModel('Events');
+        $this->loadModel('Events');
         $events = $this->paginate($this->Events);
-
         $this->set(compact('events'));
         $this->set('_serialize', ['events']);
     }
@@ -83,10 +84,11 @@ echo 'Name: ' . $user['name'];
    public function fighter()
    {
         //$this->Session->delete('objects');
+        //Getting the Id of the connected fighter
         $playerId = $this->Session->read('Connected');
-
+        //getting fighters created by the user
         $this->set('characters',$this->Fighter->find('list', array('conditions' => array('player_id' => $playerId))));
-
+        //if the form has beeen sent
         if ($this->request->is('post'))
         {
             if(!empty($this->data['Register']))
@@ -120,10 +122,12 @@ echo 'Name: ' . $user['name'];
 public function attack($id1, $id2)
 {
     $this->loadModel('Fighters');
+    $this->loadModel('Events');
     $fighter1 = $this->Fighters->get($id1);
     $fighter2 = $this->Fighters->get($id2);
     if ((10 + $fighter2->level - $fighter1->level) > rand(0, 20)){
-            $this->Flash->success($id1 ."hits ". $id2 . " successfully !");
+            $this->Flash->success($fighter1->name ." hits ". $fighter2->name . " successfully !");
+            $this->addEvent_attack_successfull(date("Y-m-d H:i:s"), $fighter1->name.' attacked successfully '.$fighter2->name, $fighter1->coordinate_x,$fighter1->coordinate_y);
             $fighter1->xp++;
             // Every 4 xp, lvl up
             if ($fighter1->xp % 4 == 0) {
@@ -138,8 +142,8 @@ public function attack($id1, $id2)
                 $this->Fighters->save($fighter1);
             }
     }
-    else $this->Flash->error($id1 ."hits ". $id2 . " and misses !");
-
+    else $this->Flash->error($fighter1->name ." hits ". $fighter2->name . " and misses !");
+    $this->addEvent_attack_successfull(date("Y-m-d H:i:s"), $fighter1->name.' missed '.$fighter2->name, $fighter1->coordinate_x,$fighter1->coordinate_y);
     $this->redirect(array('controller' => 'Arenas', 'action' => 'sight'));
 }
 
@@ -356,6 +360,51 @@ public function logout() {
         $this->set(compact('event'));
         $this->set('_serialize', ['event']);
     }
+
+        public function addEvent_attack_successfull($time, $action, $pos_x, $pos_y)
+        {
+            $Event = \Cake\ORM\TableRegistry::get('Events');
+            $newEvent = $Event->newEntity();
+            $newEvent->date = $time;
+            $newEvent->name = $action;
+            $newEvent->coordinate_x = $pos_x;
+            $newEvent->coordinate_y = $pos_y;
+            $Event->save($newEvent);
+
+        }
+        public function addEvent_attack_fail($time, $action, $pos_x, $pos_y)
+        {
+            $Event = \Cake\ORM\TableRegistry::get('Events');
+            $newEvent = $Event->newEntity();
+            $newEvent->date = $time;
+            $newEvent->name = $action;
+            $newEvent->coordinate_x = $pos_x;
+            $newEvent->coordinate_y = $pos_y;
+            $Event->save($newEvent);
+
+        }
+        public function addEvent_move($time, $action, $pos_x, $pos_y)
+        {
+            $Event = \Cake\ORM\TableRegistry::get('Events');
+            $newEvent = $Event->newEntity();
+            $newEvent->date = $time;
+            $newEvent->name = $action;
+            $newEvent->coordinate_x = $pos_x;
+            $newEvent->coordinate_y = $pos_y;
+            $Event->save($newEvent);
+
+        }
+        public function addEvent_died($time, $action, $pos_x, $pos_y)
+        {
+            $Event = \Cake\ORM\TableRegistry::get('Events');
+            $newEvent = $Event->newEntity();
+            $newEvent->date = $time;
+            $newEvent->name = $action;
+            $newEvent->coordinate_x = $pos_x;
+            $newEvent->coordinate_y = $pos_y;
+            $Event->save($newEvent);
+
+        }
 
 
 }
