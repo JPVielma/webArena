@@ -11,32 +11,32 @@
 <h1>Combat Arena</h1>
 <?php
 echo "<table>";
-for ($i=0; $i<10; $i++){
+for ($i=0; $i<BORDERY; $i++){
     echo "<tr>";
-    for ($j=0; $j<15; $j++){
+    for ($j=0; $j<BORDERX; $j++){
         echo "<td>";
-        if ($matrix[$i][$j]==1)echo "F";
-        if ($matrix[$i][$j]==0) echo ".";
-        if ($matrix[$i][$j]==2) echo "</br>".$this->Form->postLink(
+        if ($matrix[$i][$j]==FIGHTER && $surroundings[$i][$j]==1)echo "F";
+        if ($matrix[$i][$j]==0 && $surroundings[$i][$j]==0) echo ".";
+        if ($matrix[$i][$j]==2 && $surroundings[$i][$j]==1) echo "</br>".$this->Form->postLink(
                 'Attack!',
                 array('controller' => 'Arenas',
                     'action' => 'attack', $fighter['id'], $players[$i.$j]['id']));
-        if ($matrix[$i][$j]==10) echo "</br>".$this->Form->postLink(
+        if ($matrix[$i][$j]==UP && $surroundings[$i][$j]==1) echo "</br>".$this->Form->postLink(
                 'X',
                 array('controller' => 'Arenas',
-                    'action' => 'move', $fighter['id'], 10));
-        if ($matrix[$i][$j]==11) echo "</br>".$this->Form->postLink(
+                    'action' => 'move', $fighter['id'], UP));
+        if ($matrix[$i][$j]==DOWN && $surroundings[$i][$j]==1) echo "</br>".$this->Form->postLink(
                 'X',
                 array('controller' => 'Arenas',
-                    'action' => 'move', $fighter['id'], 11));
-        if ($matrix[$i][$j]==12) echo "</br>".$this->Form->postLink(
+                    'action' => 'move', $fighter['id'], DOWN));
+        if ($matrix[$i][$j]==LEFT && $surroundings[$i][$j]==1) echo "</br>".$this->Form->postLink(
                 'X',
                 array('controller' => 'Arenas',
-                    'action' => 'move', $fighter['id'], 12));
-        if ($matrix[$i][$j]==13) echo "</br>".$this->Form->postLink(
+                    'action' => 'move', $fighter['id'], LEFT));
+        if ($matrix[$i][$j]==RIGHT && $surroundings[$i][$j]==1) echo "</br>".$this->Form->postLink(
                 'X',
                 array('controller' => 'Arenas',
-                    'action' => 'move', $fighter['id'], 13));
+                    'action' => 'move', $fighter['id'], RIGHT));
         echo "</td>" ;
     }
     echo "</tr>";
