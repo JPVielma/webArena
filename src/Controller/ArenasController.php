@@ -60,8 +60,11 @@ class ArenasController  extends AppController
 
     public function diary()
     {
-        //Affichage des évènements en commençant par le plus récent
-       $this->set('raw',$this->Event->find('all',array('order'=>array('id DESC'))));
+         $this->loadModel('Events');
+        $events = $this->paginate($this->Events);
+
+        $this->set(compact('events'));
+        $this->set('_serialize', ['events']);
     }
 
    public function fighter()
@@ -136,7 +139,6 @@ public function attack($id1, $id2)
             $matrix[$row->coordinate_y][$row->coordinate_x]=FIGHTER;
             $players[$row->coordinate_y.$row->coordinate_x]=$row;
             if ($row->id==1) $fighter=$row;
-        }
        $j=$fighter->coordinate_x;
        $i=$fighter->coordinate_y;
         if($matrix[$i+1][$j]==FIGHTER)$matrix[$i+1][$j]=ATTACK;
@@ -153,6 +155,7 @@ public function attack($id1, $id2)
         $this->set("fighters", $fighters);
         $this->set("fighter", $fighter);
     }
+}
 
     public function move($idFighter, $direction){
         $this->loadModel('Fighters');
@@ -287,6 +290,25 @@ public function logout() {
             }
         }
 
+    }
+
+
+
+        public function addEvent()
+    {
+        $event = $this->Events->newEntity();
+        if ($this->request->is('post')) {
+            $event = $this->Events->patchEntity($event, $this->request->data);
+            if ($this->Events->save($event)) {
+                $this->Flash->success(__('The event has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            } else {
+                $this->Flash->error(__('The event could not be saved. Please, try again.'));
+            }
+        }
+        $this->set(compact('event'));
+        $this->set('_serialize', ['event']);
     }
 
 
