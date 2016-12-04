@@ -2,14 +2,6 @@
 namespace App\Controller;
 use App\Controller\AppController;
 use Facebook; 
-use Facebook\FacebookSession;
-use Facebook\FacebookRedirectLoginHelper;
-use Facebook\FacebookRequest;
-use Facebook\FacebookResponse;
-use Facebook\GraphUser;
-use Facebook\FacebookSDKException;
-use Facebook\FacebookRequestException;
-use Facebook\FacebookAuthorizationException;
 use Cake\Routing\Router;
 
 define("EMPTY", 0);
@@ -22,11 +14,7 @@ define ("DOWN", 12);
 define ("RIGHT", 13);
 
 class ArenasController  extends AppController
-{
-    public $uses = array('Player', 'Fighter', 'Event', 'Surrounding');
-    
-
-
+{   
     public function index()
     {
 
@@ -39,6 +27,8 @@ class ArenasController  extends AppController
 
         mail($_POST['email'], $subject ,$content);
         $this->Flash->success('Password sent to your mail account');
+        $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
+
     }
         public function register()
     {
@@ -126,10 +116,13 @@ public function attack($id1, $id2)
 
  public function sight()
     {
-
+        if(isset($_SESSION['valid'])){
+            $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
+        }
         for ($i=0; $i<10; $i++){
             for ($j=0; $j<15; $j++){
                 $matrix[$i][$j]=0;
+                $surroundings[$i][$j]=0;
             }
         }
         $this->loadModel('Fighters');
@@ -139,17 +132,29 @@ public function attack($id1, $id2)
             $matrix[$row->coordinate_y][$row->coordinate_x]=FIGHTER;
             $players[$row->coordinate_y.$row->coordinate_x]=$row;
             if ($row->id==1) $fighter=$row;
-       $j=$fighter->coordinate_x;
-       $i=$fighter->coordinate_y;
-        if($matrix[$i+1][$j]==FIGHTER)$matrix[$i+1][$j]=ATTACK;
-        else $matrix[$i+1][$j]=UP;
-        if($matrix[$i][$j+1]==FIGHTER)$matrix[$i][$j+1]=ATTACK;
-        else $matrix[$i][$j+1]=RIGHT;
-        if($matrix[$i-1][$j]==FIGHTER)$matrix[$i-1][$j]=ATTACK;
-        else $matrix[$i-1][$j]=DOWN;
-        if($matrix[$i][$j-1]==FIGHTER)$matrix[$i][$j-1]=ATTACK;
-        else $matrix[$i][$j-1]=LEFT;
+       $x_fighter=$fighter->coordinate_x;
+       $y_fighter=$fighter->coordinate_y;
+        if($matrix[$y_fighter+1][$x_fighter]==FIGHTER)$matrix[$y_fighter+1][$x_fighter]=ATTACK;
+        else $matrix[$y_fighter+1][$x_fighter]=UP;
+        if($matrix[$y_fighter][$x_fighter+1]==FIGHTER)$matrix[$y_fighter][$x_fighter+1]=ATTACK;
+        else $matrix[$y_fighter][$x_fighter+1]=RIGHT;
+        if($matrix[$y_fighter-1][$x_fighter]==FIGHTER)$matrix[$y_fighter-1][$x_fighter]=ATTACK;
+        else $matrix[$y_fighter-1][$x_fighter]=DOWN;
+        if($matrix[$y_fighter][$x_fighter-1]==FIGHTER)$matrix[$y_fighter][$x_fighter-1]=ATTACK;
+        else $matrix[$y_fighter][$x_fighter-1]=LEFT;
+
+        $sight=($fighter->skill_sight)+1;
+        $count=0;
+        for ($i=0; $i<$sight; $i++){
+            for ($j=0; $j<$sight-$i; $j++){
+                $surroundings[$y_fighter+$i][$x_fighter+$j]=1;
+                $surroundings[$y_fighter+$i][$x_fighter-$j]=1;
+                $surroundings[$y_fighter-$i][$x_fighter+$j]=1;
+                $surroundings[$y_fighter-$i][$x_fighter-$j]=1;
+            }
+        }
          
+        $this->set("surroundings", $surroundings); 
         $this->set("players", $players);
         $this->set("matrix", $matrix);
         $this->set("fighters", $fighters);
@@ -185,15 +190,15 @@ public function attack($id1, $id2)
 
 public function logout() {
     session_start();
-     $this->Session->destroy();
+     $this->request->session()->destroy();
     $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
 }
     
 
     public function login()
     {
-        // pr( $this->Auth->User('user_id'));
-        // require_once __DIR__ . '/vendor/autoload.php';
+        $session = $this->request->session();
+
         $fb = new Facebook\Facebook([
           'app_id' => '390888334577306',
           'app_secret' => 'c720dcf8f82343e3ee705b7b8fff3e34',
@@ -282,9 +287,10 @@ public function logout() {
             // debug($user->title);
                 // pr($user->username);
             if ($user) {
-                $_SESSION['valid'] = true;
-                $_SESSION['user'] = $user;
-                $this->redirect(array('controller' => 'Arenas', 'action' => 'sight'));
+                $session->write('valid', true);
+                $session->write('username', $user->email);
+                $session->write('id', $user->id);
+                $this->redirect(array('controller' => 'Arenas', 'action' => 'index'));
             }else {
                  $this->Flash->error('Incorrect Login');
             }
@@ -294,7 +300,7 @@ public function logout() {
 
 
 
-        public function addEvent()
+    public function addEvent()
     {
         $event = $this->Events->newEntity();
         if ($this->request->is('post')) {
