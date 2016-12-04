@@ -1,6 +1,14 @@
-<?php $this -> layout = 'index';?>
-
-<div class="jumbotron top-space">
+<?php //$this -> layout = 'index';?>
+<nav class="large-3 medium-4 columns" id="actions-sidebar">
+    <ul class="side-nav">
+        <li class="heading"><?= __('Actions') ?></li>
+        <li><strong><?= $this->Html->link(__('Home'), ['action' => 'index']) ?></strong></li>
+        <li><?= $this->Html->link(__('Combat Arena'), ['action' => 'sight']) ?></li>
+        <li><?= $this->Html->link(__('List Fighters'), ['controller' => 'Fighters', 'action' => 'index']) ?></li>
+        <li><?= $this->Html->link(__('New Fighter'), ['controller' => 'Fighters', 'action' => 'add']) ?></li>
+    </ul>
+</nav>
+<div class="players view large-9 medium-8 columns content">
 		<div class="container">
 			
 			<h1 class="text-center thin">Game Rules</h1>

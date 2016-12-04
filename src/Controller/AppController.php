@@ -18,6 +18,7 @@ use Cake\Controller\Controller;
 use Cake\Event\Event;
 use Cake\Controller\Component\AuthComponent;
 
+
 /**
  * Application Controller
  *
@@ -44,26 +45,26 @@ class AppController extends Controller
 
         $this->loadComponent('RequestHandler');
         $this->loadComponent('Flash');
-        $this->loadComponent('Auth', [
-            'authenticate'=> [
-                'Form'=> [
-                        'fields'=> [
-                            'username'=> 'email',
-                            'password'=> 'password'               
-                        ],
-                        'userModel'=>'Players'
-                ]
-            ],
-            'loginAction'=>[
-                'controller'=>'Arenas',
-                'action' => 'login'
-            ],
-            'logoutRedirect' => array(
-                'controller' => 'Arenas',
-                'action' => 'login',
-                'home'
-            ),
-        ]);
+        // $this->loadComponent('Auth', [
+        //     'authenticate'=> [
+        //         'Form'=> [
+        //                 'fields'=> [
+        //                     'username'=> 'email',
+        //                     'password'=> 'password'               
+        //                 ],
+        //                 'userModel'=>'Players'
+        //         ]
+        //     ],
+        //     'loginAction'=>[
+        //         'controller'=>'Arenas',
+        //         'action' => 'login'
+        //     ],
+        //     'logoutRedirect' => array(
+        //         'controller' => 'Arenas',
+        //         'action' => 'login',
+        //         'home'
+        //     ),
+        // ]);
     }
 
     /**

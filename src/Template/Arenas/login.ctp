@@ -7,7 +7,8 @@
        <?= $this->Form->input('password', array('type'=>'password'));?>
        <?= $this->Form->submit('Login', array('class'=>'button'));?>
        <?= $this->Form->end(); ?>
-		<a href="<?php echo $loginUrl;?>">Log in with Facebook!</a>
+
+		    <a href="<?php echo $loginUrl;?>">Log in with Facebook!</a>
    </div>
 
    
