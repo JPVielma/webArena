@@ -104,28 +104,37 @@ public function attack($id1, $id2)
 {
     $this->loadModel('Fighters');
     $this->loadModel('Events');
-    $fighter1 = $this->Fighters->get($id1);
-    $fighter2 = $this->Fighters->get($id2);
-    if ((10 + $fighter2->level - $fighter1->level) > rand(0, 20)){
-            $this->Flash->success($fighter1->name ." hits ". $fighter2->name . " successfully !");
-            $this->addEvent(date("Y-m-d H:i:s"), $fighter1->name.' attacked successfully '.$fighter2->name, $fighter1->coordinate_x,$fighter1->coordinate_y);
-            $fighter1->xp++;
-            // Every 4 xp, lvl up
-            if ($fighter1->xp % 4 == 0) {
-                $fighter1->level++;
-            }
-            $fighter2->current_health-=$fighter1->skill_strength;
-            $this->Fighters->save($fighter2);
-            $this->Fighters->save($fighter1);
-            if ($fighter2->current_health==0) {
-                $this->deleteFighter($fighter2->id);
-                $fighter1->xp += $fighter2->level;
+    $this->Fighters->action();
+    if($_SESSION['action_points'] > 0){
+        $fighter1 = $this->Fighters->get($id1);
+        $fighter2 = $this->Fighters->get($id2);
+        if ((10 + $fighter2->level - $fighter1->level) > rand(0, 20)){
+                $this->Flash->success($fighter1->name ." hits ". $fighter2->name . " successfully !");
+                $this->addEvent(date("Y-m-d H:i:s"), $fighter1->name.' attacked successfully '.$fighter2->name, $fighter1->coordinate_x,$fighter1->coordinate_y);
+                $fighter1->xp++;
+                // Every 4 xp, lvl up
+                if ($fighter1->xp % 4 == 0) {
+                    $fighter1->level++;
+                }
+                $fighter2->current_health-=$fighter1->skill_strength;
+                $this->Fighters->save($fighter2);
                 $this->Fighters->save($fighter1);
-            }
+                if ($fighter2->current_health==0) {
+                    $this->deleteFighter($fighter2->id);
+                    $fighter1->xp += $fighter2->level;
+                    $this->Fighters->save($fighter1);
+                }
+        }
+        else $this->Flash->error($fighter1->name ." hits ". $fighter2->name . " and misses !");
+        $this->addEvent(date("Y-m-d H:i:s"), $fighter1->name.' missed '.$fighter2->name, $fighter1->coordinate_x,$fighter1->coordinate_y);
+        $this->redirect(array('controller' => 'Arenas', 'action' => 'sight'));
     }
-    else $this->Flash->error($fighter1->name ." hits ". $fighter2->name . " and misses !");
-    $this->addEvent(date("Y-m-d H:i:s"), $fighter1->name.' missed '.$fighter2->name, $fighter1->coordinate_x,$fighter1->coordinate_y);
-    $this->redirect(array('controller' => 'Arenas', 'action' => 'sight'));
+
+    else{
+        $this->Flash->error('No more action points, please wait.');
+        $this->redirect(array('controller' => 'Arenas', 'action' => 'sight'));
+    }
+    
 }
 
  public function sight()
@@ -189,7 +198,10 @@ public function attack($id1, $id2)
 
     public function move($idFighter, $direction){
         $this->loadModel('Fighters');
-        $fighter = $this->Fighters->get($idFighter);
+        $this->Fighters->action();
+        if($_SESSION['action_points'] > 0){
+            $_SESSION['action_points']--;
+            $fighter = $this->Fighters->get($idFighter);
 
         switch($direction){
             case UP:
@@ -215,6 +227,13 @@ public function attack($id1, $id2)
         }
         $this->Fighters->save($fighter);
         $this->redirect(array('controller' => 'Arenas', 'action' => 'sight'));
+        }
+        
+        else{
+            $this->Flash->error('No more action points, please wait.');
+            $this->redirect(array('controller' => 'Arenas', 'action' => 'sight'));
+        }
+        
     }
 
 public function logout() {

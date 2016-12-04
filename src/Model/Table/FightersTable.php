@@ -5,6 +5,10 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use DateTime;
+
+define("RECOVERY", 10);
+define("MAX_POINTS", 3);
 
 /**
  * Fighters Model
@@ -130,5 +134,46 @@ class FightersTable extends Table
         $rules->add($rules->existsIn(['guild_id'], 'Guilds'));
 
         return $rules;
+    }
+    
+    public function action() {
+        session_start();
+        $date = date('Y-m-d H:i:s');
+        $date_end = new DateTime($date);
+        //debug($date_end);
+        if(!isset($_SESSION['start_time'])){
+            $_SESSION['start_time'] = $date_end;
+        }
+        
+        if(!isset($_SESSION['action_points'])){
+            $_SESSION['action_points'] = 1;
+        }
+
+        $dateDiff  = $_SESSION['start_time']->diff($date_end);
+        $minutes = $dateDiff->format("%i");
+        $seconds = $dateDiff->format("%s");
+        
+        $total_seconds = $seconds + $minutes * 60;
+        
+        $action_points = floor($total_seconds / RECOVERY);
+        
+        
+        if($action_points > 0)
+        {        
+            $_SESSION['action_points'] += $action_points;
+            if($_SESSION['action_points'] > MAX_POINTS){
+                $_SESSION['action_points'] = MAX_POINTS;
+            }
+            $_SESSION['start_time'] = $date_end;
+        }
+        
+            
+        
+        //$this->redirect(array('controller' => 'Arenas', 'action' => 'sight'));
+      
+        //echo($dateDiff);
+        
+        //debug($_SESSION['start_time']);
+    
     }
 }
