@@ -3,6 +3,7 @@ namespace App\Controller;
 use App\Controller\AppController;
 use Facebook; 
 use Cake\Routing\Router;
+use Cake\Mailer\Email;
 
 define("EMPTY", 0);
 define("FIGHTER", 1);
@@ -21,36 +22,61 @@ class ArenasController  extends AppController
 {   
     public function index()
     {
-        $fb = new Facebook\Facebook([
-          'app_id' => '390888334577306',
-          'app_secret' => 'c720dcf8f82343e3ee705b7b8fff3e34',
-          'default_graph_version' => 'v2.4',
-      ]);
+        if($this->request->session()->read('valid')!=true){
+           
+        }
 
-try {
-  // Returns a `Facebook\FacebookResponse` object
-  $response = $fb->get('/me?fields=id,name', '{access-token}');
-} catch(Facebook\Exceptions\FacebookResponseException $e) {
-  echo 'Graph returned an error: ' . $e->getMessage();
-  exit;
-} catch(Facebook\Exceptions\FacebookSDKException $e) {
-  echo 'Facebook SDK returned an error: ' . $e->getMessage();
-  exit;
-}
+//         $fb = new Facebook\Facebook([
+//           'app_id' => '390888334577306',
+//           'app_secret' => 'c720dcf8f82343e3ee705b7b8fff3e34',
+//           'default_graph_version' => 'v2.4',
+//       ]);
 
-$user = $response->getGraphUser();
+// try {
+//   // Returns a `Facebook\FacebookResponse` object
+//   $response = $fb->get('/me?fields=id,name', '{access-token}');
+// } catch(Facebook\Exceptions\FacebookResponseException $e) {
+//   echo 'Graph returned an error: ' . $e->getMessage();
+//   exit;
+// } catch(Facebook\Exceptions\FacebookSDKException $e) {
+//   echo 'Facebook SDK returned an error: ' . $e->getMessage();
+//   exit;
+// }
 
-echo 'Name: ' . $user['name'];
+// $user = $response->getGraphUser();
+
+// echo 'Name: ' . $user['name'];
     }
 
     public function recoverPassword(){
-        $password;
-        $subject="Your Web Arena password recovery";
-        $content="Your Web Arena Password is:".$password;
 
-        mail($_POST['email'], $subject ,$content);
-        $this->Flash->success('Password sent to your mail account');
-        $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
+        if($this->request->is('post')){
+            $this->loadModel('Players');
+            $user= $this->Players->find()
+                ->where(['email' => $this->request->data('email')])
+                ->first();
+
+            if ($user) {
+                $destination=$this->request->data('email');
+                $password=$user->password;
+                $subject="Your Web Arena password recovery";
+                $content="Your Web Arena Password is:".$password;
+
+                // $email = new Email('default');
+                // $email->from(['support@webarena.com' => 'Web Arena'])
+                //     ->to($destination)
+                //     ->subject($subject)
+                //     ->send($content);
+                // $this->Flash->success('Password sent to your mail account');
+                $this->Flash->success($content);
+
+                $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
+            }else {
+                 $this->Flash->error('Username not found');
+            }
+        }
+
+
 
     }
         public function register()
@@ -73,6 +99,9 @@ echo 'Name: ' . $user['name'];
 
     public function diary()
     {
+        if($this->request->session()->read('valid')!=true){
+            $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
+        }
          $this->loadModel('Events');
         $events = $this->paginate($this->Events);
 
@@ -119,6 +148,9 @@ echo 'Name: ' . $user['name'];
     
 public function attack($id1, $id2)
 {
+    if($this->request->session()->read('valid')!=true){
+        $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
+    }
     $this->loadModel('Fighters');
     $fighter1 = $this->Fighters->get($id1);
     $fighter2 = $this->Fighters->get($id2);
@@ -145,7 +177,7 @@ public function attack($id1, $id2)
 
  public function sight()
 {
-        if(isset($_SESSION['valid'])){
+        if($this->request->session()->read('valid')!=true){
             $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
         }
         for ($i=0; $i<=BORDERY; $i++){
@@ -156,13 +188,16 @@ public function attack($id1, $id2)
         }
         $this->loadModel('Fighters');
         $fighters = $this->Fighters->find();
-       
+       $fighter=null;
         foreach ($fighters as $row){
             $matrix[$row->coordinate_y][$row->coordinate_x]=FIGHTER;
             $players[$row->coordinate_y.$row->coordinate_x]=$row;
-            if ($row->id==1) $fighter=$row;
+            if ($row->player_id==$this->request->session()->read('id')) $fighter=$row;
         }
-
+    if($fighter==null){
+         $this->redirect(array('controller' => 'Fighters', 'action' => 'index'));
+    }
+    else{
        $x_fighter=$fighter->coordinate_x;
        $y_fighter=$fighter->coordinate_y;
 
@@ -185,6 +220,7 @@ public function attack($id1, $id2)
                 $surroundings[$y_fighter-$i][$x_fighter-$j]=1;
             }
         }
+    }
 
         $this->set("surroundings", $surroundings); 
         $this->set("players", $players);
@@ -203,6 +239,10 @@ public function attack($id1, $id2)
 }
 
     public function move($idFighter, $direction){
+        if($this->request->session()->read('valid')!=true){
+            $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
+        }
+
         $this->loadModel('Fighters');
         $fighter = $this->Fighters->get($idFighter);
 
@@ -303,7 +343,7 @@ public function logout() {
         } else {
             // replace your website URL same as added in the developers.facebook.com/apps e.g. if you used http instead of https and you used non-www version or www version of your website then you must add the same here
 
-            $url= Router::url(['controller' => 'Arenas', 'action' => 'index'],true);
+            $url= Router::url(['controller' => 'Arenas', 'action' => 'fblogin'],true);
             $loginUrl = $helper->getLoginUrl($url, $permissions);
 
             $this->set('loginUrl', $loginUrl);
@@ -312,20 +352,11 @@ public function logout() {
         }
 
         if($this->request->is('post')){
-        
-        //     $user = $this->Auth->identify();
-        //     if($user){
-        //         $this->Auth->setUser($user);
-        //         return $this->redirect(['Arenas' => 'index']);
-        //     }
-        //      $this->Flash->error('Incorrect Login');
-        // }
             $this->loadModel('Players');
-            $user= $this->Players->get(1);
-            //     ->where(['email' => "'".$_POST['email']."'", 'password' => "'".$_POST['password']."'"])
-            //     ->first();
-            // debug($user->title);
-                // pr($user->username);
+            $user= $this->Players->find()
+                ->where(['email' => $this->request->data('email'), 'password' => $this->request->data('password')])
+                ->first();
+
             if ($user) {
                 $session->write('valid', true);
                 $session->write('username', $user->email);
@@ -338,10 +369,35 @@ public function logout() {
 
     }
 
+    public function fblogin(){
+        $name='Logged in with Facebook';
+            $session = $this->request->session();
+            $session->write('valid', true);
+            $session->write('username', $name);
+           
+         $this->loadModel('Players');
+            $user= $this->Players->find()
+                ->where(['email' => $name])
+                ->first();
+            if(!$user){
+                $this->loadModel('Players');
+                $player = $this->Players->newEntity();
+                $player->email=$name;
+                $player->password="facebook";
+                $this->Players->save($player);
 
+                $user=$player;
+            }
+             $session->write('id', $user->id);
+            $this->redirect(array('controller' => 'Arenas', 'action' => 'index'));
+    }
 
     public function addEvent()
     {
+        if($this->request->session()->read('valid')!=true){
+            $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
+        }
+
         $event = $this->Events->newEntity();
         if ($this->request->is('post')) {
             $event = $this->Events->patchEntity($event, $this->request->data);

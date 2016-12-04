@@ -28,6 +28,9 @@
         </thead>
         <tbody>
             <?php foreach ($fighters as $fighter): ?>
+                <?php if($fighter->player_id==$_SESSION['id']):?>
+                    <?php
+                    $hasFighter=true;?>
             <tr>
                 <td><?= h($fighter->name) ?></td>
                 <td><?= $this->Number->format($fighter->coordinate_x) ?></td>
@@ -45,6 +48,7 @@
                     <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $fighter->id], ['confirm' => __('Are you sure you want to delete # {0}?', $fighter->id)]) ?>
                 </td>
             </tr>
+             <?php endif?>
             <?php endforeach; ?>
         </tbody>
     </table>
@@ -56,5 +60,7 @@
         </ul>
         <p><?= $this->Paginator->counter() ?></p>
     </div>
+        <?php if(!$hasFighter):?> 
         <li><?= $this->Html->link(__('New Fighter'), ['action' => 'add']) ?></li>
+        <?php endif?>
 </div>
