@@ -22,8 +22,6 @@
             // echo $this->Form->input('skill_strength');
             // echo $this->Form->input('skill_health');
             // echo $this->Form->input('current_health');
-            // echo $this->Form->input('next_action_time', ['empty' => true]);
-            // echo $this->Form->input('guild_id', ['options' => $guilds, 'empty' => true]);
         ?>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>
