@@ -21,22 +21,21 @@
 					</div>
 				</div>
 				<div class="col-md-3 col-sm-6 highlight">
-					<div class="h-caption"><h4><i class="fa fa-flash fa-5"></i>Attaque</h4></div>
+					<div class="h-caption"><h4><i class="fa fa-flash fa-5"></i>Attack</h4></div>
 					<div class="h-body text-center">
-						<p>Une action d'attaque réussit si une valeur aléatoire entre 1 et 20 (d20) est supérieur à un seuil calculé comme suit : 10 + niveau de l'attaqué - niveau de l'attaquant. </p>
+						<p>An attack is successful if a random value between 1 and 20 is higher than ( 10 + Attackee Level - Attacker Level )</p>
 					</div>
 				</div>
 				<div class="col-md-3 col-sm-6 highlight">
-					<div class="h-caption"><h4><i class="fa fa-heart fa-5"></i>Santé</h4></div>
+					<div class="h-caption"><h4><i class="fa fa-heart fa-5"></i>Skills</h4></div>
 					<div class="h-body text-center">
-						<p>Un combattant commence avec les caractéristiques suivantes : vue= 0, force=1, point de vie=3. Il apparaît à une position aléatoire libre.
-                                                   Lorsque le combattant voit ses points de vie atteindre 0, il est retiré du jeu. Un joueur dont le combattant a été retiré du jeu est invité à en recréer un nouveau. </p>
+						<p>A fighter starts with the following skills : sight = 0, strength = 1, health = 3. He spawns at a randam position in the grid. When he reaches 0 health, he is removed from the game. The player is then requested to create a new fighter.</p>
 					</div>
 				</div>
 				<div class="col-md-3 col-sm-6 highlight">
-					<div class="h-caption"><h4><i class="fa fa-smile-o fa-5"></i>Vie social</h4></div>
+					<div class="h-caption"><h4><i class="fa fa-smile-o fa-5"></i>Diary</h4></div>
 					<div class="h-body text-center">
-						<p>Chaque action provoque la création d'un événement avec une description claire. Par exemple : « jonh attaque bill et le touche ». </p>
+						<p>Each action is logged with a clear description. E.g. "1 attacks 2 and hits !"</p>
 					</div>
 				</div>
 			</div> <!-- /row  -->

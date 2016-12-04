@@ -83,11 +83,10 @@ echo 'Name: ' . $user['name'];
    public function fighter()
    {
         //$this->Session->delete('objects');
-        //Récupération de l'id du player connecté
         $playerId = $this->Session->read('Connected');
-        //Récupération des fighters créés par le joueur
+
         $this->set('characters',$this->Fighter->find('list', array('conditions' => array('player_id' => $playerId))));
-        //Si un formulaire a été envoyé
+
         if ($this->request->is('post'))
         {
             if(!empty($this->data['Register']))
@@ -96,7 +95,6 @@ echo 'Name: ' . $user['name'];
                 $this->Fighter->save($this->request->data);
                 $this->Fighter->createPerso($this->data['Register']['Your Username'], $playerId);
                         
-                //On sauvegarde la création de fighter
                 $x = $this->Fighter->field('coordinate_x');
                 $y = $this->Fighter->field('coordinate_y');
                 $fighter = $this->Fighter->field('name');
@@ -105,7 +103,7 @@ echo 'Name: ' . $user['name'];
         }
     }
 
-    public function deleteFighter($id = null)
+    public function deleteFighter($id)
     {
         $this->request->allowMethod(['post', 'delete']);
         $fighter = $this->Fighters->get($id);
@@ -127,10 +125,18 @@ public function attack($id1, $id2)
     if ((10 + $fighter2->level - $fighter1->level) > rand(0, 20)){
             $this->Flash->success($id1 ."hits ". $id2 . " successfully !");
             $fighter1->xp++;
+            // Every 4 xp, lvl up
+            if ($fighter1->xp % 4 == 0) {
+                $fighter1->level++;
+            }
             $fighter2->current_health-=$fighter1->skill_strength;
-            if ($fighter2->current_health==0) $this->deleteFighter($fighter2);
-            $this->Fighters->save($fighter1);
             $this->Fighters->save($fighter2);
+            $this->Fighters->save($fighter1);
+            if ($fighter2->current_health==0) {
+                $this->deleteFighter($fighter2->id);
+                $fighter1->xp += $fighter2->level;
+                $this->Fighters->save($fighter1);
+            }
     }
     else $this->Flash->error($id1 ."hits ". $id2 . " and misses !");
 
