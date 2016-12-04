@@ -2,19 +2,15 @@
 namespace App\Controller;
 use App\Controller\AppController;
 use Facebook; 
-use Facebook\FacebookSession;
-use Facebook\FacebookRedirectLoginHelper;
-use Facebook\FacebookRequest;
-use Facebook\FacebookResponse;
-use Facebook\GraphUser;
-use Facebook\FacebookSDKException;
-use Facebook\FacebookRequestException;
-use Facebook\FacebookAuthorizationException;
 use Cake\Routing\Router;
 
 define("EMPTY", 0);
 define("FIGHTER", 1);
 define ("ATTACK", 2);
+
+define ("BORDERX", 15);
+define ("BORDERY", 10);
+
 
 define ("LEFT", 10);
 define ("UP", 11);
@@ -22,14 +18,29 @@ define ("DOWN", 12);
 define ("RIGHT", 13);
 
 class ArenasController  extends AppController
-{
-    public $uses = array('Player', 'Fighter', 'Event', 'Surrounding');
-    
-
-
+{   
     public function index()
     {
+        $fb = new Facebook\Facebook([
+          'app_id' => '390888334577306',
+          'app_secret' => 'c720dcf8f82343e3ee705b7b8fff3e34',
+          'default_graph_version' => 'v2.4',
+      ]);
 
+try {
+  // Returns a `Facebook\FacebookResponse` object
+  $response = $fb->get('/me?fields=id,name', '{access-token}');
+} catch(Facebook\Exceptions\FacebookResponseException $e) {
+  echo 'Graph returned an error: ' . $e->getMessage();
+  exit;
+} catch(Facebook\Exceptions\FacebookSDKException $e) {
+  echo 'Facebook SDK returned an error: ' . $e->getMessage();
+  exit;
+}
+
+$user = $response->getGraphUser();
+
+echo 'Name: ' . $user['name'];
     }
 
     public function recoverPassword(){
@@ -39,6 +50,8 @@ class ArenasController  extends AppController
 
         mail($_POST['email'], $subject ,$content);
         $this->Flash->success('Password sent to your mail account');
+        $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
+
     }
         public function register()
     {
@@ -70,11 +83,10 @@ class ArenasController  extends AppController
    public function fighter()
    {
         //$this->Session->delete('objects');
-        //Récupération de l'id du player connecté
         $playerId = $this->Session->read('Connected');
-        //Récupération des fighters créés par le joueur
+
         $this->set('characters',$this->Fighter->find('list', array('conditions' => array('player_id' => $playerId))));
-        //Si un formulaire a été envoyé
+
         if ($this->request->is('post'))
         {
             if(!empty($this->data['Register']))
@@ -83,7 +95,6 @@ class ArenasController  extends AppController
                 $this->Fighter->save($this->request->data);
                 $this->Fighter->createPerso($this->data['Register']['Your Username'], $playerId);
                         
-                //On sauvegarde la création de fighter
                 $x = $this->Fighter->field('coordinate_x');
                 $y = $this->Fighter->field('coordinate_y');
                 $fighter = $this->Fighter->field('name');
@@ -114,6 +125,10 @@ public function attack($id1, $id2)
     if ((10 + $fighter2->level - $fighter1->level) > rand(0, 20)){
             $this->Flash->success($id1 ."hits ". $id2 . " successfully !");
             $fighter1->xp++;
+            // Every 4 xp, lvl up
+            if ($fighter1->xp % 4 == 0) {
+                $fighter1->level++;
+            }
             $fighter2->current_health-=$fighter1->skill_strength;
             $this->Fighters->save($fighter2);
             $this->Fighters->save($fighter1);
@@ -129,11 +144,14 @@ public function attack($id1, $id2)
 }
 
  public function sight()
-    {
-
-        for ($i=0; $i<10; $i++){
-            for ($j=0; $j<15; $j++){
+{
+        if(isset($_SESSION['valid'])){
+            $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
+        }
+        for ($i=0; $i<=BORDERY; $i++){
+            for ($j=0; $j<BORDERX; $j++){
                 $matrix[$i][$j]=0;
+                $surroundings[$i][$j]=0;
             }
         }
         $this->loadModel('Fighters');
@@ -143,22 +161,45 @@ public function attack($id1, $id2)
             $matrix[$row->coordinate_y][$row->coordinate_x]=FIGHTER;
             $players[$row->coordinate_y.$row->coordinate_x]=$row;
             if ($row->id==1) $fighter=$row;
-       $j=$fighter->coordinate_x;
-       $i=$fighter->coordinate_y;
-        if($matrix[$i+1][$j]==FIGHTER)$matrix[$i+1][$j]=ATTACK;
-        else $matrix[$i+1][$j]=UP;
-        if($matrix[$i][$j+1]==FIGHTER)$matrix[$i][$j+1]=ATTACK;
-        else $matrix[$i][$j+1]=RIGHT;
-        if($matrix[$i-1][$j]==FIGHTER)$matrix[$i-1][$j]=ATTACK;
-        else $matrix[$i-1][$j]=DOWN;
-        if($matrix[$i][$j-1]==FIGHTER)$matrix[$i][$j-1]=ATTACK;
-        else $matrix[$i][$j-1]=LEFT;
-         
+        }
+
+       $x_fighter=$fighter->coordinate_x;
+       $y_fighter=$fighter->coordinate_y;
+
+        if($matrix[$y_fighter+1][$x_fighter]==FIGHTER)$matrix[$y_fighter+1][$x_fighter]=ATTACK;
+        else if($y_fighter+1<BORDERY)$matrix[$y_fighter+1][$x_fighter]=UP;
+        if($matrix[$y_fighter][$x_fighter+1]==FIGHTER)$matrix[$y_fighter][$x_fighter+1]=ATTACK;
+        else if($x_fighter+1<BORDERX) $matrix[$y_fighter][$x_fighter+1]=RIGHT;
+        if($matrix[$y_fighter-1][$x_fighter]==FIGHTER)$matrix[$y_fighter-1][$x_fighter]=ATTACK;
+        else if($y_fighter-1>=0) $matrix[$y_fighter-1][$x_fighter]=DOWN;
+        if($matrix[$y_fighter][$x_fighter-1]==FIGHTER)$matrix[$y_fighter][$x_fighter-1]=ATTACK;
+        else if (($x_fighter-1)>0)$matrix[$y_fighter][$x_fighter-1]=LEFT;
+
+        $sight=($fighter->skill_sight)+1;
+        $count=0;
+        for ($i=0; $i<$sight; $i++){
+            for ($j=0; $j<$sight-$i; $j++){
+                $surroundings[$y_fighter+$i][$x_fighter+$j]=1;
+                $surroundings[$y_fighter+$i][$x_fighter-$j]=1;
+                $surroundings[$y_fighter-$i][$x_fighter+$j]=1;
+                $surroundings[$y_fighter-$i][$x_fighter-$j]=1;
+            }
+        }
+
+        $this->set("surroundings", $surroundings); 
         $this->set("players", $players);
         $this->set("matrix", $matrix);
         $this->set("fighters", $fighters);
         $this->set("fighter", $fighter);
-    }
+
+        $this->set("FIGHTER", FIGHTER); 
+        $this->set("UP", UP); 
+        $this->set("DOWN", DOWN); 
+        $this->set("LEFT", LEFT); 
+        $this->set("RIGHT", RIGHT); 
+        $this->set("BORDERY", BORDERY); 
+        $this->set("BORDERX", BORDERX); 
+
 }
 
     public function move($idFighter, $direction){
@@ -189,15 +230,15 @@ public function attack($id1, $id2)
 
 public function logout() {
     session_start();
-     $this->Session->destroy();
+     $this->request->session()->destroy();
     $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
 }
     
 
     public function login()
     {
-        // pr( $this->Auth->User('user_id'));
-        // require_once __DIR__ . '/vendor/autoload.php';
+        $session = $this->request->session();
+
         $fb = new Facebook\Facebook([
           'app_id' => '390888334577306',
           'app_secret' => 'c720dcf8f82343e3ee705b7b8fff3e34',
@@ -286,9 +327,10 @@ public function logout() {
             // debug($user->title);
                 // pr($user->username);
             if ($user) {
-                $_SESSION['valid'] = true;
-                $_SESSION['user'] = $user;
-                $this->redirect(array('controller' => 'Arenas', 'action' => 'sight'));
+                $session->write('valid', true);
+                $session->write('username', $user->email);
+                $session->write('id', $user->id);
+                $this->redirect(array('controller' => 'Arenas', 'action' => 'index'));
             }else {
                  $this->Flash->error('Incorrect Login');
             }
@@ -298,7 +340,7 @@ public function logout() {
 
 
 
-        public function addEvent()
+    public function addEvent()
     {
         $event = $this->Events->newEntity();
         if ($this->request->is('post')) {

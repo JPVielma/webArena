@@ -13,7 +13,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-$cakeDescription = 'CakePHP: the rapid development php framework';
+$cakeDescription = 'Web Arena';
 ?>
 <!DOCTYPE html>
 <html>
@@ -45,7 +45,8 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
             <?php
             session_start();
             if(isset($_SESSION['valid'])){
-                echo "<li><". $this->Html->link(__('Logout'), ['controller' => 'Arenas', 'action' => 'logout'])."></li>";
+                echo "<li>".$_SESSION['username']."</li>";
+                echo "<li>". $this->Html->link(__('Logout'), ['controller' => 'Arenas', 'action' => 'logout'])."</li>";
             }
             else{
                 echo "<li>".$this->Html->link(__('Log In'), ['controller' => 'Arenas', 'action' => 'login'])."</li>
