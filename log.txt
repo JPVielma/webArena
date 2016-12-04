@@ -1,0 +1,178 @@
+commit ea762541064d8b66bf078fbcc05be5a20e645afa
+Merge: 724c55d 3ad472f
+Author: Juan Pablo Vielma <Juan Pablo Vielma>
+Date:   Sun Dec 4 23:14:04 2016 +0100
+
+    Merge branch 'feature/login' of https://github.com/JPVielma/webArena into feature/login
+
+commit 724c55d209d3013dcb465cca4a077c7a5a830b41
+Author: Juan Pablo Vielma <Juan Pablo Vielma>
+Date:   Sun Dec 4 23:12:27 2016 +0100
+
+    Bug Fixes
+
+commit 8237de528391cd7a651767a3a2671929cfc11905
+Author: Juan Pablo Vielma <Juan Pablo Vielma>
+Date:   Sun Dec 4 23:04:09 2016 +0100
+
+    Bug Fixes
+
+commit 3ad472f539a1a4bb043c35723434567a1ea1b934
+Merge: aba848e 45ab429
+Author: Unknown <leonard.lys@gmail.com>
+Date:   Sun Dec 4 22:25:35 2016 +0100
+
+    Merged branch feature/login into feature/login
+
+commit aba848ed0e8c5ac419dad338901e7061ebf0637f
+Author: Unknown <leonard.lys@gmail.com>
+Date:   Sun Dec 4 22:25:23 2016 +0100
+
+    Fix display events
+
+commit 45ab4294c48b9433f9c2a66af048975276bd3141
+Merge: 17787fa fcf0759
+Author: Juan Pablo Vielma <Juan Pablo Vielma>
+Date:   Sun Dec 4 21:48:38 2016 +0100
+
+    Merge
+
+commit 17787fa7490bb34e051e18d4dfadc8e3a33c393d
+Author: Juan Pablo Vielma <Juan Pablo Vielma>
+Date:   Sun Dec 4 21:44:17 2016 +0100
+
+    Auth Backend Finished
+
+commit fcf07599c36f72e28dad78f6038a854a99bdf1ef
+Author: Unknown <leonard.lys@gmail.com>
+Date:   Sun Dec 4 20:02:00 2016 +0100
+
+    diary functions simplified
+
+commit d558854824cff64d6ac9f8534a063bb37c948601
+Author: Unknown <leonard.lys@gmail.com>
+Date:   Sun Dec 4 19:27:11 2016 +0100
+
+    fixed events
+
+commit e0b61ed6306e2e592ad0610848d819288f2d50ed
+Merge: 2ed2959 bc4ad65
+Author: Unknown <leonard.lys@gmail.com>
+Date:   Sun Dec 4 19:25:46 2016 +0100
+
+    Merged branch feature/login into feature/login
+
+commit 2ed2959f708d0dea9879f3fce3c144fe57cb3d54
+Author: Unknown <leonard.lys@gmail.com>
+Date:   Sun Dec 4 19:25:19 2016 +0100
+
+    Fixed events
+
+commit bc4ad65516e35d622ea92e6710252bb29cf4b9fb
+Merge: 8173be0 e0e815c
+Author: Juan Pablo Vielma <Juan Pablo Vielma>
+Date:   Sun Dec 4 19:09:22 2016 +0100
+
+    Merge branch 'feature/login' of https://github.com/JPVielma/webArena into feature/login
+
+commit 8173be0cdec1ba313a872c2c900898a61281008f
+Author: Juan Pablo Vielma <Juan Pablo Vielma>
+Date:   Sun Dec 4 19:09:16 2016 +0100
+
+    constants & view integration[C
+
+commit eaa7220fa805cd6829118e584d59379eb5a025ed
+Author: Juan Pablo Vielma <Juan Pablo Vielma>
+Date:   Sun Dec 4 19:05:05 2016 +0100
+
+    attack fighter bug fix
+
+commit b3f38295902b7479eb46257f56e3d7b76683fa6a
+Author: Juan Pablo Vielma <Juan Pablo Vielma>
+Date:   Sun Dec 4 18:29:19 2016 +0100
+
+    manhattan Distance
+
+commit e0e815c2914b801107528044dafb69ee20c1e55b
+Author: alex <debrie.alex@gmail.com>
+Date:   Sun Dec 4 17:59:08 2016 +0100
+
+    Lvl up every 4 xp
+
+commit 1cc5fb7b387fb730fafeac73371a0652045b74ca
+Author: alex <debrie.alex@gmail.com>
+Date:   Sun Dec 4 17:09:29 2016 +0100
+
+    Fixed fighter kill
+
+commit 26144c606b74036b8eb6b0457b37609232cba08f
+Author: alex <debrie.alex@gmail.com>
+Date:   Sun Dec 4 16:47:15 2016 +0100
+
+    fixed new fighter bug
+
+commit a19c424fb96cba30dc0cba12199ff93d692e4ca4
+Author: alex <debrie.alex@gmail.com>
+Date:   Sun Dec 4 16:08:15 2016 +0100
+
+    index page
+
+commit f68872202e6e9e792d3801e64eb64d7c3858794a
+Author: Juan Pablo Vielma <Juan Pablo Vielma>
+Date:   Sun Dec 4 15:18:37 2016 +0100
+
+    navigation upgrade
+
+commit 93c8b88cee6399730025080d272bcb3de5897339
+Author: Juan Pablo Vielma <Juan Pablo Vielma>
+Date:   Sun Dec 4 14:35:26 2016 +0100
+
+    main navigation
+
+commit f3552ed600e66a5cda36f4a0c23f1aa036ac1d27
+Author: Juan Pablo Vielma <Juan Pablo Vielma>
+Date:   Sat Dec 3 14:16:45 2016 +0100
+
+    main development
+
+commit cf314aec1fc35771b96b65e06032b722c349261c
+Author: Juan Pablo Vielma <Juan Pablo Vielma>
+Date:   Mon Nov 21 15:11:44 2016 +0100
+
+    fb login absolute url fix
+
+commit 87315f5c71685d005ab39cc2a925a02e4566c070
+Author: Juan Pablo Vielma <Juan Pablo Vielma>
+Date:   Mon Nov 21 00:45:04 2016 +0100
+
+    facebook login fixed
+
+commit fcf2b26b7d56f3d490b36e7e0a559b8c207b7e34
+Author: Juan Pablo Vielma <Juan Pablo Vielma>
+Date:   Mon Nov 21 00:17:04 2016 +0100
+
+    facebook login, first commit
+
+commit 98cd7f57f2d5b94b2255bdb5a7bc0c803071a934
+Author: Juan Pablo Vielma <Juan Pablo Vielma>
+Date:   Mon Nov 7 16:48:17 2016 +0100
+
+    Auth Failed, controller and Models for fighters guilds and players
+
+commit 7fc15b0f9adfcf54e742dbf8837728c9097e4a6c
+Author: Juan Pablo Vielma <Juan Pablo Vielma>
+Date:   Mon Nov 7 15:02:52 2016 +0100
+
+    Database setup
+
+commit 1c3f8a238013431cbf764cab5050d455d2b3c723
+Author: Juan Pablo Vielma <Juan Pablo Vielma>
+Date:   Mon Nov 7 14:48:52 2016 +0100
+
+    first commit
+
+commit cfee4cd7b4433ef2f310a795aa202583794319f3
+Author: Juan Pablo Vielma <Juan Pablo Vielma>
+Date:   Mon Nov 7 14:44:46 2016 +0100
+
+    first commit
