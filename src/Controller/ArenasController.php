@@ -6,6 +6,7 @@ use Cake\Routing\Router;
 use Cake\Mailer\Email;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
+use Cake\I18n\Time;
 
 
 define("EMPTY", 0);
@@ -87,7 +88,14 @@ class ArenasController  extends AppController
             $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
         }
         $this->loadModel('Events');
-        $events = $this->paginate($this->Events);
+        $events = $this->paginate($this->Events, ['order' => ['Events.date' => 'desc']]);
+        foreach ($events as $key) {
+            if(!$key->date->wasWithinLast(1))
+            {
+                $this->Events->delete($key);
+            }
+
+        }
         $this->set(compact('events'));
         $this->set('_serialize', ['events']);
     }
@@ -119,7 +127,7 @@ class ArenasController  extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $fighter = $this->Fighters->get($id);
-        $this->addEvent(date("Y-m-d H:i:s"), $fighter->name.' has dieded ', $fighter->coordinate_x,$fighter->coordinate_y);
+        $this->addEvent(Time::now(), $fighter->name.' has dieded ', $fighter->coordinate_x,$fighter->coordinate_y);
         if ($this->Fighters->delete($fighter)) {
             $this->Flash->success(__('The fighter has been eliminated.'));
         } else {
@@ -141,7 +149,7 @@ public function attack($id1, $id2)
     $fighter2 = $this->Fighters->get($id2);
     if ((10 + $fighter2->level - $fighter1->level) > rand(0, 20)){
             $this->Flash->success($fighter1->name ." hits ". $fighter2->name . " successfully !");
-            $this->addEvent(date("Y-m-d H:i:s"), $fighter1->name.' attacked successfully '.$fighter2->name, $fighter1->coordinate_x,$fighter1->coordinate_y);
+            $this->addEvent(Time::now(), $fighter1->name.' attacked successfully '.$fighter2->name, $fighter1->coordinate_x,$fighter1->coordinate_y);
             $fighter1->xp++;
             // Every 4 xp, lvl up
             if ($fighter1->xp % 4 == 0) {
@@ -157,7 +165,7 @@ public function attack($id1, $id2)
             }
     }
     else $this->Flash->error($fighter1->name ." hits ". $fighter2->name . " and misses !");
-    $this->addEvent(date("Y-m-d H:i:s"), $fighter1->name.' missed '.$fighter2->name, $fighter1->coordinate_x,$fighter1->coordinate_y);
+    $this->addEvent(Time::now(), $fighter1->name.' missed '.$fighter2->name, $fighter1->coordinate_x,$fighter1->coordinate_y);
     $this->redirect(array('controller' => 'Arenas', 'action' => 'sight'));
 }
 
@@ -237,22 +245,22 @@ public function attack($id1, $id2)
             case UP:
                  $y=$fighter->coordinate_y;
                  $fighter->coordinate_y=$y+1;
-                 $this->addEvent(date("Y-m-d H:i:s"), $fighter->name.' moved North ', $fighter->coordinate_x,$fighter->coordinate_y);
+                 $this->addEvent(Time::now(), $fighter->name.' moved North ', $fighter->coordinate_x,$fighter->coordinate_y);
                 break;
             case DOWN:
                 $y=$fighter->coordinate_y;
                 $fighter->coordinate_y=$y-1;
-                $this->addEvent(date("Y-m-d H:i:s"), $fighter->name.' moved South ', $fighter->coordinate_x,$fighter->coordinate_y);
+                $this->addEvent(Time::now(), $fighter->name.' moved South ', $fighter->coordinate_x,$fighter->coordinate_y);
                 break;
             case LEFT:
                 $x=$fighter->coordinate_x;
                 $fighter->coordinate_x=$x-1;
-                $this->addEvent(date("Y-m-d H:i:s"), $fighter->name.' moved East ', $fighter->coordinate_x,$fighter->coordinate_y);
+                $this->addEvent(Time::now(), $fighter->name.' moved East ', $fighter->coordinate_x,$fighter->coordinate_y);
                 break;
             case RIGHT:
                 $x=$fighter->coordinate_x;
                 $fighter->coordinate_x=$x+1;
-                $this->addEvent(date("Y-m-d H:i:s"), $fighter->name.' moved West ', $fighter->coordinate_x,$fighter->coordinate_y);
+                $this->addEvent(Time::now(), $fighter->name.' moved West ', $fighter->coordinate_x,$fighter->coordinate_y);
                 break;
         }
         $this->Fighters->save($fighter);
