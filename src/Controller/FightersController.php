@@ -18,11 +18,16 @@ class FightersController extends AppController
      */
     public function index()
     {
+        $hasFighter=false;
+        if($this->request->session()->read('valid')!=true){
+            $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
+        }
         $this->paginate = [
             'contain' => ['Players', 'Guilds']
         ];
         $fighters = $this->paginate($this->Fighters);
 
+        $this->set("hasFighter", $hasFighter);
         $this->set(compact('fighters'));
         $this->set('_serialize', ['fighters']);
     }
@@ -36,6 +41,9 @@ class FightersController extends AppController
      */
     public function view($id = null)
     {
+        if($this->request->session()->read('valid')!=true){
+            $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
+        }
         $fighter = $this->Fighters->get($id, [
             'contain' => ['Players', 'Guilds', 'Messages', 'Tools']
         ]);
@@ -51,14 +59,18 @@ class FightersController extends AppController
      */
     public function add()
     {
+        if($this->request->session()->read('valid')!=true){
+            $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
+        }
         $fighter = $this->Fighters->newEntity();
         if ($this->request->is('post')) {
             //Generating new fighter with default values
+            $this->request->data['Fighters']['player_id'] = $this->request->session()->read('id');
             $this->request->data['Fighters']['coordinate_x'] = rand(0,15);
             $this->request->data['Fighters']['coordinate_y'] = rand(0,10);
             $this->request->data['Fighters']['level'] = 1; 
             $this->request->data['Fighters']['xp'] = 0;
-            $this->request->data['Fighters']['skill_sight'] = 0;
+            $this->request->data['Fighters']['skill_sight'] = 1;
             $this->request->data['Fighters']['skill_strength'] = 1;
             $this->request->data['Fighters']['skill_health'] = 3;
             $this->request->data['Fighters']['current_health'] = 3;
@@ -86,6 +98,9 @@ class FightersController extends AppController
      */
     public function edit($id = null)
     {
+        if($this->request->session()->read('valid')!=true){
+            $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
+        }
         $fighter = $this->Fighters->get($id, [
             'contain' => []
         ]);
@@ -114,6 +129,9 @@ class FightersController extends AppController
      */
     public function delete($id = null)
     {
+        if($this->request->session()->read('valid')!=true){
+            $this->redirect(array('controller' => 'Arenas', 'action' => 'login'));
+        }
         $this->request->allowMethod(['post', 'delete']);
         $fighter = $this->Fighters->get($id);
         if ($this->Fighters->delete($fighter)) {

@@ -43,7 +43,7 @@ $cakeDescription = 'Web Arena';
         <div class="top-bar-section">
             <ul class="right">
             <?php
-            session_start();
+            // session_start();
             if(isset($_SESSION['valid'])){
                 echo "<li>".$_SESSION['username']."</li>";
                 echo "<li>". $this->Html->link(__('Logout'), ['controller' => 'Arenas', 'action' => 'logout'])."</li>";
